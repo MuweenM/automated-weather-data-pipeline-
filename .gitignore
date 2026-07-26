@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs and generated files
+*.log
+logs/
+target/
+.dbt/
+
+# Airflow and dbt
+airflow/logs/
+dbt/logs/
+dbt/target/
+
+# Local data and runtime state
+postgres/data/
+*.pid
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db

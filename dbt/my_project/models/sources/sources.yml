@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: dev
+    database: db
+    schema: dev
+    tables:
+      - name: raw_weather_data
+        columns:
+          - name: city 
+          - name: temperature 
+          - name: id
+          - name: weather_description 
+          - name: wind_speed  
+          - name: pressure  
+          - name: humidity  
+          - name: time 
+          - name: inserted_at                   
+          - name: utc_offset
