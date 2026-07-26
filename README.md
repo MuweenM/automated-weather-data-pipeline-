@@ -17,7 +17,7 @@ Optional but useful:
 Open a terminal and run:
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/MuweenM/automated-weather-data-pipeline-.git
 cd weather-data-project
 ```
 
