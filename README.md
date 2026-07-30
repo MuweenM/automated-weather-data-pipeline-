@@ -58,16 +58,16 @@ The entire platform runs locally using Docker Compose.
 
 # 🛠️ Technology Stack
 
-| Technology | Purpose |
-|------------|---------|
-| Python | API extraction and ingestion |
-| Weatherstack API | Weather data source |
-| PostgreSQL | Data storage |
-| Apache Airflow | Workflow orchestration |
-| dbt | Data transformation |
-| Apache Superset | Data visualization |
-| Docker Compose | Container management |
-| Redis | Superset dependency |
+| Technology |
+|------------|
+| Python | 
+| Weatherstack API |
+| PostgreSQL |
+| Apache Airflow |
+| dbt | 
+| Apache Superset | 
+| Docker Compose | 
+
 
 ---
 
