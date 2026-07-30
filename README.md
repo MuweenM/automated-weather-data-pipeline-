@@ -46,7 +46,7 @@ The entire platform runs locally using Docker Compose.
                           |
                           |
                           v
-                    transformation                          |
+                    transformation                         
                           |
                           |
                           v
