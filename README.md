@@ -1,144 +1,414 @@
-# Weather Data Project
+# 🌦️ Automated Weather Data Pipeline
 
-This project collects weather data, stores it in PostgreSQL, orchestrates the pipeline with Airflow, transforms the data with dbt, and visualizes it with Apache Superset.
+An end-to-end **weather data engineering pipeline** that collects weather data from the Weatherstack API, stores it in PostgreSQL, orchestrates workflows using Apache Airflow, transforms data with dbt, and visualizes insights using Apache Superset.
 
-## What you need
-Before you start, install the following on your PC:
+This project demonstrates a modern data engineering workflow:
 
-- Docker Desktop (Windows/macOS) or Docker Engine with Docker Compose v2 (Linux)
+
+
+---
+
+# 🚀 Project Overview
+
+The pipeline performs the following operations:
+
+1. Extracts weather data from the Weatherstack API
+2. Loads raw weather records into PostgreSQL
+3. Automates pipeline execution using Apache Airflow
+4. Transforms raw data into analytics-ready datasets using dbt
+5. Creates dashboards and visualizations using Apache Superset
+
+The entire platform runs locally using Docker Compose.
+
+---
+
+# ✨ Features
+
+- ✅ Automated weather data ingestion
+- ✅ PostgreSQL data storage
+- ✅ Apache Airflow workflow orchestration
+- ✅ dbt data transformation layer
+- ✅ Apache Superset visualization
+- ✅ Dockerized environment
+- ✅ Reproducible local deployment
+- ✅ Modular data engineering architecture
+
+---
+
+# 🏗️ Architecture
+
+```
+                    Weatherstack API
+                          |
+                          |
+                          v
+                      Ingestion 
+                          |
+                          |
+                          v
+                    transformation                          |
+                          |
+                          |
+                          v
+                  Apache Superset
+                Analytics & Dashboards
+```
+
+---
+
+# 🛠️ Technology Stack
+
+| Technology | Purpose |
+|------------|---------|
+| Python | API extraction and ingestion |
+| Weatherstack API | Weather data source |
+| PostgreSQL | Data storage |
+| Apache Airflow | Workflow orchestration |
+| dbt | Data transformation |
+| Apache Superset | Data visualization |
+| Docker Compose | Container management |
+| Redis | Superset dependency |
+
+---
+
+# 📋 Prerequisites
+
+Before starting, install the following:
+
+## Required
+
+- Docker Desktop (Windows/macOS)
+- Docker Engine + Docker Compose v2 (Linux)
 - Git
-- A Weatherstack API key (free tier is enough)
+- Weatherstack API key
 
-Optional but useful:
+
+## Optional but Useful
+
+- WSL2 (Windows users who prefer a Linux-based development environment)
 - Python 3.10+ for local debugging
-- VS Code
+- Visual Studio Code
+- VS Code Remote - WSL extension
 
-## 1. Clone the repository
-Open a terminal and run:
+# 📥 Installation
+
+## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/MuweenM/automated-weather-data-pipeline-.git
+
 cd weather-data-project
 ```
 
-Important:
-- Keep the folder name as weather-data-project.
-- The Airflow DAG expects the default Docker network name weather-data-project_my-network.
-- If you clone it under a different folder name, update the network name in airflow/dags/orchestrator.py.
+## Important
 
-## 2. Create the environment file
-Create a file named .env in the project root:
+Keep the project folder name:
 
-```bash
+```
+weather-data-project
+```
+
+The Airflow DAG expects the default Docker network:
+
+```
+weather-data-project_my-network
+```
+
+If you clone the repository using another folder name, update the network name inside:
+
+```
+airflow/dags/orchestrator.py
+```
+
+---
+
+# 2. Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
 WEATHERSTACK_API_KEY=your_weatherstack_api_key_here
 ```
 
-You can also review and adjust the default service settings in docker/.env if you need different ports.
+You can modify default service configurations inside:
 
-## 3. Start the containers
-From the project root, run:
+```
+docker/.env
+```
+
+---
+
+# 3. Start the Containers
+
+Run:
 
 ```bash
 docker compose up -d
 ```
 
-This will start:
-- PostgreSQL on port 5000
-- Airflow on port 8000
-- Superset on port 8088
-- Redis for Superset
-- dbt container for transformations
+This starts the following services:
 
-To check that everything is running:
+| Service | Port |
+|---------|------|
+| PostgreSQL | 5000 |
+| Airflow | 8000 |
+| Superset | 8088 |
+| Redis | Internal |
+| dbt | Container |
+
+Check running services:
 
 ```bash
 docker compose ps
 ```
 
-If you want to see logs:
+View logs:
 
 ```bash
 docker compose logs -f af
 ```
 
-## 4. Access the services
-After the containers start, open these URLs in your browser:
+---
 
-- Airflow UI: http://localhost:8000
-- Superset UI: http://localhost:8088
+# 🌐 Access Applications
 
-### Default credentials
-- Superset login:
-  - Username: admin
-  - Password: admin
+After the containers are running:
 
-### Database connection details
-- Host: localhost
-- Port: 5000
-- Database: db
-- Username: db_user
-- Password: db_password
+| Application | URL |
+|-------------|-----|
+| Airflow UI | http://localhost:8000 |
+| Superset UI | http://localhost:8088 |
 
-## 5. Run the weather data ingestion
-The ingestion script reads data from Weatherstack and inserts it into the PostgreSQL database.
+---
 
-Run it manually with:
+# 🔑 Default Credentials
+
+## Superset Login
+
+```
+Username: admin
+Password: admin
+```
+
+---
+
+# 🗄️ Database Configuration
+
+PostgreSQL connection details:
+
+```
+Host: localhost
+Port: 5000
+Database: db
+Username: db_user
+Password: db_password
+```
+
+Raw weather table:
+
+```
+dev.raw_weather_data
+```
+
+---
+
+# 🌦️ Running Weather Data Ingestion
+
+The ingestion script retrieves weather information from Weatherstack and inserts it into PostgreSQL.
+
+Run manually:
 
 ```bash
 docker compose exec af python /opt/airflow/api-request/insert_records.py
 ```
 
-This creates or fills the table dev.raw_weather_data.
+After execution, weather records will be stored in:
 
-## 6. Run the dbt transformation
-The dbt container is configured to run the dbt project automatically when the stack starts. If you want to run it again manually:
-
-```bash
-docker compose run --rm dbt
+```
+dev.raw_weather_data
 ```
 
-## 7. Use the Airflow DAG
-The DAG named weather-api-dbt-orchestrator is available in Airflow.
+---
 
-It performs the following steps:
-1. Ingests weather data
-2. Runs the dbt transformation job
+# 🔄 Running dbt Transformations
 
-You can trigger it from the Airflow UI.
+dbt handles:
 
-## 8. Useful commands
-Stop everything:
+- Data cleaning
+- Data modeling
+- Transformation logic
+- Analytics-ready datasets
+
+---
+
+# ⚙️ Airflow Pipeline
+
+The main Airflow DAG:
+
+```
+weather-api-dbt-orchestrator
+```
+
+Pipeline workflow:
+
+```
+Extract Weather Data
+          |
+          v
+Load Data Into PostgreSQL
+          |
+          v
+Run dbt Transformation
+```
+
+The DAG can be triggered manually from the Airflow web interface.
+
+---
+
+# 📂 Project Structure
+
+```
+weather-data-project/
+
+├── api-request/
+│   └── Weather API ingestion scripts
+│
+├── airflow/
+│   └── Airflow DAG definitions
+│
+├── dbt/
+│   └── dbt models 
+│
+├── docker/
+│   └── Docker configurations
+│
+├── postgres/
+│   └── Database initialization scripts
+│
+├── docker-compose.yml
+└── .env
+```
+
+---
+
+# 🧰 Useful Commands
+
+## Stop containers
 
 ```bash
 docker compose down
 ```
 
-Stop everything and remove volumes:
+## Stop containers and remove volumes
 
 ```bash
 docker compose down -v
 ```
 
-Rebuild containers after changes:
+## Rebuild containers
 
 ```bash
 docker compose up -d --build
 ```
 
-## 9. Troubleshooting
-If something does not work, check the following:
+## View logs
 
-- Docker is not running: start Docker Desktop or the Docker service.
-- Docker Compose is not found: install the Docker Compose plugin.
-- Airflow cannot reach Docker: ensure Docker daemon is running and your user has permission to access /var/run/docker.sock.
-- Database connection errors: wait a few minutes for PostgreSQL to finish initializing.
-- Missing weather data: make sure WEATHERSTACK_API_KEY is present in the .env file.
-- Airflow network errors: keep the project folder named weather-data-project or update the network name in airflow/dags/orchestrator.py.
+```bash
+docker compose logs -f
+```
 
-## Project structure
-- api-request/: ingestion scripts
-- airflow/: Airflow DAGs
-- dbt/: dbt project and models
-- docker/: Superset and container bootstrap scripts
-- postgres/: database initialization scripts
+---
 
+# 🐛 Troubleshooting
+
+## Docker is not running
+
+Make sure:
+
+- Docker Desktop is running
+- Docker Engine service is active
+
+---
+
+## Docker Compose not found
+
+Verify installation:
+
+```bash
+docker compose version
+```
+
+Install Docker Compose v2 if unavailable.
+
+---
+
+## Airflow cannot access Docker
+
+Check:
+
+- Docker daemon is running
+- User permissions allow Docker socket access
+
+Linux users may need access to:
+
+```
+/var/run/docker.sock
+```
+
+---
+
+## Database connection errors
+
+PostgreSQL may require a few minutes to initialize.
+
+Check logs:
+
+```bash
+docker compose logs postgres
+```
+
+---
+
+## Missing weather data
+
+Check:
+
+1. `.env` file exists
+2. Weatherstack API key is valid
+3. Ingestion script completed successfully
+
+---
+
+## Airflow network errors
+
+Ensure the project folder is named:
+
+```
+weather-data-project
+```
+
+Otherwise update the network configuration:
+
+```
+airflow/dags/orchestrator.py
+```
+
+
+
+# 👨‍💻 Author
+
+**Muween M**
+
+Data Engineering project demonstrating:
+
+- ETL pipeline development
+- Workflow orchestration
+- Data transformation
+- Analytics engineering
+- Containerized infrastructure
+
+---
+
+# ⭐ Support
+
+If you find this project useful, consider giving it a ⭐ on GitHub.
